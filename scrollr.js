@@ -4,9 +4,11 @@
 	
 	https://github.com/cuth/scrollr
 	
-	required:
-		jquery
-		jquery UI - "draggable"
+	Version: 1.0
+	
+	Requires:
+		jQuery
+		jQueryUI - Draggable Component
 		jquery.mousewheel.js - https://github.com/brandonaaron/jquery-mousewheel
 */
 
