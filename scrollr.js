@@ -25,6 +25,7 @@ var Scrollr = function (frame) {
 	this.barYHeight = 0;
 	this.barXWidth = 0;
 	this.inUse = false;
+	return this;
 };
 Scrollr.prototype = (function () {
 	'use strict';
@@ -62,7 +63,6 @@ Scrollr.prototype = (function () {
 			}
 			this.scrollHeight = this.$wrap[0].scrollHeight;
 			this.scrollWidth = this.$wrap[0].scrollWidth;
-
 			// adjust vertical scroll if necessary
 			if (this.scrollHeight > this.frameHeight + 2) {
 				this.inUse = true;
@@ -72,7 +72,6 @@ Scrollr.prototype = (function () {
 			} else {
 				this.$barY.css({ display: 'none' });
 			}
-
 			// adjust horizontal scroll if necessary
 			if (this.scrollWidth > this.frameWidth + 2) {
 				this.inUse = true;
@@ -85,7 +84,6 @@ Scrollr.prototype = (function () {
 		},
 		init = function () {
 			var self = this;
-
 			// adjust the markup
 			this.$frame.css({ overflow: 'hidden' });
 			this.$frame.wrapInner('<div class="scrollyWrap"/>');
@@ -93,10 +91,6 @@ Scrollr.prototype = (function () {
 			this.$frame.append('<div class="scrollyBarY"></div><div class="scrollyBarX"></div>');
 			this.$barY = this.$frame.find('div.scrollyBarY');
 			this.$barX = this.$frame.find('div.scrollyBarX');
-
-			// initialize the scrollbars
-			setBarSize.call(this);
-
 			// attach events
 			$(window).resize(function () {
 				setBarSize.call(self);
@@ -132,8 +126,8 @@ Scrollr.prototype = (function () {
 					}
 				}
 			});
+			return this;
 		};
-
 	return {
 		init: init,
 		setBarSize: setBarSize
