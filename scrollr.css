@@ -1,0 +1,25 @@
+.scrollyArea {
+	position: relative;
+}
+.scrollyWrap {
+	overflow: hidden;
+}
+.scrollyBarX, .scrollyBarY {
+	display: none;
+	position: absolute;
+	border-radius: 5px;
+	background: #000;
+	opacity: .50;
+}
+.scrollyBarY {
+	top: 0;
+	right: 0;
+	width: 10px;
+	min-height: 10px;
+}
+.scrollyBarX {
+	bottom: 0;
+	left: 0;
+	height: 10px;
+	min-width: 10px;
+}
