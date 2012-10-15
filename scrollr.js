@@ -113,19 +113,21 @@ Scrollr.prototype = (function () {
 					setFrameScrollX.call(self, ui.position.left);
 				}
 			});
-			this.$frame.bind('mousewheel', function (event, delta, deltaX, deltaY) {
-				if (self.inUse) {
-					event.stopPropagation();
-					if (deltaY !== 0) {
-						setFrameWheelY.call(self, deltaY);
-						setBarYPos.call(self);
+			if($.event.special.mousewheel) {
+				this.$frame.bind('mousewheel', function (event, delta, deltaX, deltaY) {
+					if (self.inUse) {
+						event.stopPropagation();
+						if (deltaY && deltaY !== 0) {
+							setFrameWheelY.call(self, deltaY);
+							setBarYPos.call(self);
+						}
+						if (deltaX && deltaX !== 0) {
+							setFrameWheelX.call(self, deltaX);
+							setBarXPos.call(self);
+						}
 					}
-					if (deltaX !== 0) {
-						setFrameWheelX.call(self, deltaX);
-						setBarXPos.call(self);
-					}
-				}
-			});
+				});
+			}
 			return this;
 		};
 	return {
