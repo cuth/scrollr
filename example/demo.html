@@ -26,10 +26,8 @@
 		var scrollBar, scrollBody;
 		$(function() {
 			if(!("ontouchstart" in window)) {
-				scrollBody = new Scrollr('body').init();
-				scrollBar = new Scrollr(document.getElementById('mainScroll')).init();
-				scrollBody.setBarSize();
-				scrollBar.setBarSize();
+				scrollBody = new Scrollr('body');
+				scrollBar = new Scrollr(document.getElementById('mainScroll'));
 			}
 		});
 	</script>
