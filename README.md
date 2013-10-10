@@ -16,6 +16,9 @@ This is a simple javascript scroll bar built for modern browsers.
 6.	Run `setBarSize` when you have initalized all of you scroll objects. This should be run after every initialize because changing the overflow property can change the size of the element.
 
 ### Example
-	if(!("ontouchstart" in window)) {
-		var sb = new Scrollr('body');
-	}
+
+```javascript
+if(!("ontouchstart" in window)) {
+	var sb = new Scrollr('body');
+}
+```
