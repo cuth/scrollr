@@ -12,13 +12,14 @@
         jquery.mousewheel.js - https://github.com/brandonaaron/jquery-mousewheel
 */
 
-(function (w, $) {
+(function (exports, $) {
     "use strict";
     var defaults = {
             debounceTime: 300,
             animationDuration: 400,
             animationEasing: 'swing'
         },
+        $window = $(window),
         setFrameScrollY = function (barTop) {
             var percentage = barTop / (this.frameHeight - this.barYHeight);
             this.$wrap[0].scrollTop = percentage * (this.scrollHeight - this.frameHeight);
@@ -45,8 +46,8 @@
             this.inUse = false;
             this.$wrap.css({ height: 'auto', width: 'auto' });
             if (this.$frame[0].tagName === 'BODY') {
-                this.frameHeight = $(w).height();
-                this.frameWidth = $(w).width();
+                this.frameHeight = $window.height();
+                this.frameWidth = $window.width();
             } else {
                 this.frameHeight = this.$frame[0].clientHeight;
                 this.frameWidth = this.$frame[0].clientWidth;
@@ -140,7 +141,7 @@
         },
         bindEvents = function () {
             var self = this;
-            $(w).on('resize', debounce(function () {
+            $window.on('resize', debounce(function () {
                 resize.call(self);
             }, this.opts.debounceTime));
             this.$barY.draggable({
@@ -190,13 +191,13 @@
             setBarSize.call(this);
             return true;
         };
-    w.Scrollr = function (frame, options) {
+    exports.Scrollr = function (frame, options) {
         this.result = init.call(this, frame, options);
     };
-    w.Scrollr.prototype.resize = resize;
-    w.Scrollr.prototype.setBarSize = setBarSize;
-    w.Scrollr.prototype.setBarYPos = setBarYPos;
-    w.Scrollr.prototype.setBarXPos = setBarXPos;
-    w.Scrollr.prototype.animateScrollY = animateScrollY;
-    w.Scrollr.prototype.animateScrollX = animateScrollX;
-}(window, jQuery));
+    exports.Scrollr.prototype.resize = resize;
+    exports.Scrollr.prototype.setBarSize = setBarSize;
+    exports.Scrollr.prototype.setBarYPos = setBarYPos;
+    exports.Scrollr.prototype.setBarXPos = setBarXPos;
+    exports.Scrollr.prototype.animateScrollY = animateScrollY;
+    exports.Scrollr.prototype.animateScrollX = animateScrollX;
+}(this, jQuery));
