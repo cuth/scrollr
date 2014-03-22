@@ -1,18 +1,39 @@
 /*    
-    Scrollr - by Jon Cuthbert
+    Scrollr
     This is a simple javascript scroll bar built for modern browsers.
     
     https://github.com/cuth/scrollr
     
-    Version: 1.0
+    Version: 2.0
     
     Requires:
         jQuery
-        jQueryUI - Draggable Component
-        jquery.mousewheel.js - https://github.com/brandonaaron/jquery-mousewheel
+        dragger - https://github.com/cuth/dragger
+        http://stackoverflow.com/questions/8189840/get-mouse-wheel-events-in-jquery
+
+        Use dragger:
+
+new Dragger(this.$barX, {
+    'drag': function (pos) {
+        setFrameScrollX.call(self, pos.x);
+    },
+    'initX': 0, // set the initial X position if it is not zero
+    'initY': 0, // set the initial Y position if it is not zero
+    'bounds': {
+        minX: 0,
+        maxX: this.frameWidth - this.barXWidth,
+        minY: null,
+        maxY: null
+    }
+});
+
+        change dragger bounds on resize
+        update dragger position on animate
+        Add classes to options
+        Use jquery mousewheel
 */
 
-(function (exports, $) {
+;(function (exports, $) {
     "use strict";
     var defaults = {
             debounceTime: 300,
