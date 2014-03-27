@@ -17,7 +17,7 @@ This is a simple javascript scroll bar built for modern browsers.
 ### Example
 
 ```javascript
-if(!("ontouchstart" in window)) {
+if (!("ontouchstart" in window)) {
 	var sb = new Scrollr('body');
 }
 ```
