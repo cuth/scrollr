@@ -5,8 +5,7 @@ This is a simple javascript scroll bar built for modern browsers.
 
 ### Requires
 *	jQuery
-*	jQueryUI - Draggable Component
-*	(optional for mousewheel support) - jquery.mousewheel.js - [https://github.com/brandonaaron/jquery-mousewheel]
+*	dragger - https://github.com/cuth/dragger
 
 ### Use
 1.	Include the required files

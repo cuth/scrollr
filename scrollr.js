@@ -1,46 +1,55 @@
 /*    
-    Scrollr - by Jon Cuthbert
+    Scrollr
     This is a simple javascript scroll bar built for modern browsers.
     
     https://github.com/cuth/scrollr
     
-    Version: 1.0
+    Version: 2.0
     
     Requires:
         jQuery
-        jQueryUI - Draggable Component
-        jquery.mousewheel.js - https://github.com/brandonaaron/jquery-mousewheel
+        dragger - https://github.com/cuth/dragger
+        http://stackoverflow.com/questions/8189840/get-mouse-wheel-events-in-jquery
 */
 
-(function (exports, $) {
+;(function (exports, $) {
     "use strict";
     var defaults = {
             debounceTime: 300,
             animationDuration: 400,
-            animationEasing: 'swing'
+            animationEasing: 'swing',
+            wrapClass: 'scrollyWrap',
+            xBarClass: 'scrollyBarX',
+            yBarClass: 'scrollyBarY'
         },
         $window = $(window),
         setFrameScrollY = function (barTop) {
             var percentage = barTop / (this.frameHeight - this.barYHeight);
             this.$wrap[0].scrollTop = percentage * (this.scrollHeight - this.frameHeight);
+            this.$barY.css({ top: barTop });
         },
         setFrameScrollX = function (barLeft) {
             var percentage = barLeft / (this.frameWidth - this.barXWidth);
             this.$wrap[0].scrollLeft = percentage * (this.scrollWidth - this.frameWidth);
+            this.$barX.css({ left: barLeft });
         },
         setFrameWheelY = function (delta) {
-            this.$wrap[0].scrollTop = Math.min(Math.max(0, this.$wrap[0].scrollTop + delta * -100), (this.scrollHeight - this.frameHeight));
+            this.$wrap[0].scrollTop = Math.min(Math.max(0, this.$wrap[0].scrollTop + delta), (this.scrollHeight - this.frameHeight));
         },
         setFrameWheelX = function (delta) {
-            this.$wrap[0].scrollLeft = Math.min(Math.max(0, this.$wrap[0].scrollLeft + delta * -100), (this.scrollWidth - this.frameWidth));
+            this.$wrap[0].scrollLeft = Math.min(Math.max(0, this.$wrap[0].scrollLeft + delta), (this.scrollWidth - this.frameWidth));
         },
         setBarYPos = function () {
-            var percentage = this.$wrap[0].scrollTop / (this.scrollHeight - this.frameHeight);
-            this.$barY.css({ top: percentage * (this.frameHeight - this.barYHeight) });
+            var percentage = this.$wrap[0].scrollTop / (this.scrollHeight - this.frameHeight),
+                top = percentage * (this.frameHeight - this.barYHeight);
+            this.$barY.css({ 'top': top });
+            this.dragY.setPosition({ y: top });
         },
         setBarXPos = function () {
-            var percentage = this.$wrap[0].scrollLeft / (this.scrollWidth - this.frameWidth);
-            this.$barX.css({ left: percentage * (this.frameWidth - this.barXWidth) });
+            var percentage = this.$wrap[0].scrollLeft / (this.scrollWidth - this.frameWidth),
+                left = percentage * (this.frameWidth - this.barXWidth);
+            this.$barX.css({ 'left': left });
+            this.dragX.setPosition({ x: left });
         },
         setBarSize = function () {
             this.inUse = false;
@@ -60,6 +69,10 @@
                 this.$wrap.css({ height: this.frameHeight });
                 this.barYHeight = Math.max(10, (this.frameHeight / this.scrollHeight) * this.frameHeight);
                 this.$barY.css({ height: this.barYHeight, display: 'block' });
+                this.dragY.setBounds({
+                    minY: 0,
+                    maxY: this.frameHeight - this.barYHeight
+                });
             } else {
                 this.$barY.css({ display: 'none' });
             }
@@ -69,6 +82,10 @@
                 this.$wrap.css({ width: this.frameWidth });
                 this.barXWidth = Math.max(10, (this.frameWidth / this.scrollWidth) * this.frameWidth);
                 this.$barX.css({ width: this.barXWidth, display: 'block' });
+                this.dragX.setBounds({
+                    minX: 0,
+                    maxX: this.frameWidth - this.barXWidth
+                });
             } else {
                 this.$barX.css({ display: 'none' });
             }
@@ -133,48 +150,79 @@
         },
         adjustMarkup = function () {
             this.$frame.css({ overflow: 'hidden' });
-            this.$frame.wrapInner('<div class="scrollyWrap"/>');
-            this.$wrap = this.$frame.find('div.scrollyWrap');
-            this.$frame.append('<div class="scrollyBarY"></div><div class="scrollyBarX"></div>');
-            this.$barY = this.$frame.find('div.scrollyBarY');
-            this.$barX = this.$frame.find('div.scrollyBarX');
+
+            // building the wrapper div first doesn't seem to work
+            //this.$wrap = $('<div/>', {
+            //    'class': this.opts.wrapClass
+            //});
+            //this.$frame.wrapInner(this.$wrap);
+
+            this.$frame.wrapInner('<div class="' + this.opts.wrapClass + '"/>');
+            this.$wrap = this.$frame.children('div.scrollyWrap');
+
+            this.$barY = $('<div/>', {
+                'class': this.opts.yBarClass
+            });
+            this.$barX = $('<div/>', {
+                'class': this.opts.xBarClass
+            });
+            this.$frame.append(this.$barY, this.$barX);
         },
         bindEvents = function () {
             var self = this;
             $window.on('resize', debounce(function () {
                 resize.call(self);
             }, this.opts.debounceTime));
-            this.$barY.draggable({
-                axis: 'y',
-                containment: self.$frame,
-                cursor: 'default',
-                drag: function (e, ui) {
-                    setFrameScrollY.call(self, ui.position.top);
+            this.dragY = new Dragger(this.$barY, {
+                'drag': function (pos) {
+                    setFrameScrollY.call(self, pos.y);
                 }
             });
-            this.$barX.draggable({
-                axis: 'x',
-                containment: self.$frame,
-                cursor: 'default',
-                drag: function (e, ui) {
-                    setFrameScrollX.call(self, ui.position.left);
+            this.dragX = new Dragger(this.$barX, {
+                'drag': function (pos) {
+                    setFrameScrollX.call(self, pos.x);
                 }
             });
-            if ($.event.special.mousewheel) {
-                this.$frame.bind('mousewheel', function (event, delta, deltaX, deltaY) {
-                    if (self.inUse) {
-                        event.stopPropagation();
-                        if (deltaY && deltaY !== 0) {
-                            setFrameWheelY.call(self, deltaY);
-                            setBarYPos.call(self);
-                        }
-                        if (deltaX && deltaX !== 0) {
-                            setFrameWheelX.call(self, deltaX);
-                            setBarXPos.call(self);
-                        }
+            if (window.addWheelListener) {
+                addWheelListener(this.$frame[0], function (e) {
+                    if (!self.inUse) return;
+                    e.stopPropagation();
+                    if (e.deltaY && e.deltaY !== 0) {
+                        setFrameWheelY.call(self, e.deltaY);
+                        setBarYPos.call(self);
+                    }
+                    if (e.deltaX && e.deltaX !== 0) {
+                        setFrameWheelX.call(self, e.deltaX);
+                        setBarXPos.call(self);
+                    }
+                });
+            } else {
+                this.$frame.bind('wheel', function (e) {
+                    if (!self.inUse) return;
+                    e.stopPropagation();
+                    if (e.originalEvent.deltaY && e.originalEvent.deltaY !== 0) {
+                        setFrameWheelY.call(self, e.originalEvent.deltaY);
+                        setBarYPos.call(self);
+                    }
+                    if (e.originalEvent.deltaX && e.originalEvent.deltaX !== 0) {
+                        setFrameWheelX.call(self, e.originalEvent.deltaX);
+                        setBarXPos.call(self);
                     }
                 });
             }
+            this.$frame.bind('mousewheel', function (event) {
+                if (self.inUse) {
+                    event.stopPropagation();
+                    if (deltaY && deltaY !== 0) {
+                        setFrameWheelY.call(self, deltaY);
+                        setBarYPos.call(self);
+                    }
+                    if (deltaX && deltaX !== 0) {
+                        setFrameWheelX.call(self, deltaX);
+                        setBarXPos.call(self);
+                    }
+                }
+            });
         },
         init = function (frame, options) {
             this.$frame = $(frame);
