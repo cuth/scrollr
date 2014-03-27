@@ -10,27 +10,6 @@
         jQuery
         dragger - https://github.com/cuth/dragger
         http://stackoverflow.com/questions/8189840/get-mouse-wheel-events-in-jquery
-
-        Use dragger:
-
-new Dragger(this.$barX, {
-    'drag': function (pos) {
-        setFrameScrollX.call(self, pos.x);
-    },
-    'initX': 0, // set the initial X position if it is not zero
-    'initY': 0, // set the initial Y position if it is not zero
-    'bounds': {
-        minX: 0,
-        maxX: this.frameWidth - this.barXWidth,
-        minY: null,
-        maxY: null
-    }
-});
-
-        change dragger bounds on resize
-        update dragger position on animate
-        Add classes to options
-        Use jquery mousewheel
 */
 
 ;(function (exports, $) {
@@ -171,11 +150,23 @@ new Dragger(this.$barX, {
         },
         adjustMarkup = function () {
             this.$frame.css({ overflow: 'hidden' });
-            this.$frame.wrapInner('<div class="scrollyWrap"/>');
-            this.$wrap = this.$frame.find('div.scrollyWrap');
-            this.$frame.append('<div class="scrollyBarY"></div><div class="scrollyBarX"></div>');
-            this.$barY = this.$frame.find('div.scrollyBarY');
-            this.$barX = this.$frame.find('div.scrollyBarX');
+
+            // building the wrapper div first doesn't seem to work
+            //this.$wrap = $('<div/>', {
+            //    'class': this.opts.wrapClass
+            //});
+            //this.$frame.wrapInner(this.$wrap);
+
+            this.$frame.wrapInner('<div class="' + this.opts.wrapClass + '"/>');
+            this.$wrap = this.$frame.children('div.scrollyWrap');
+
+            this.$barY = $('<div/>', {
+                'class': this.opts.yBarClass
+            });
+            this.$barX = $('<div/>', {
+                'class': this.opts.xBarClass
+            });
+            this.$frame.append(this.$barY, this.$barX);
         },
         bindEvents = function () {
             var self = this;
