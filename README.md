@@ -21,3 +21,5 @@ if (!("ontouchstart" in window)) {
 	var sb = new Scrollr('body');
 }
 ```
+
+Add lib/addWheelListener.js for more mouse wheel browser support.
