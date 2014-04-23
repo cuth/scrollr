@@ -4,16 +4,17 @@
     
     https://github.com/cuth/scrollr
     
-    Version: 2.0
+    Version: 2.0.1
     
     Requires:
         jQuery
         dragger - https://github.com/cuth/dragger
         http://stackoverflow.com/questions/8189840/get-mouse-wheel-events-in-jquery
 */
+/*global Dragger, addWheelListener */
 
 ;(function (exports, $) {
-    "use strict";
+    'use strict';
     var defaults = {
             debounceTime: 300,
             animationDuration: 400,
@@ -210,15 +211,15 @@
                     }
                 });
             }
-            this.$frame.bind('mousewheel', function (event) {
+            this.$frame.bind('mousewheel', function (e) {
                 if (self.inUse) {
-                    event.stopPropagation();
-                    if (deltaY && deltaY !== 0) {
-                        setFrameWheelY.call(self, deltaY);
+                    e.stopPropagation();
+                    if (e.deltaY && e.deltaY !== 0) {
+                        setFrameWheelY.call(self, e.deltaY);
                         setBarYPos.call(self);
                     }
-                    if (deltaX && deltaX !== 0) {
-                        setFrameWheelX.call(self, deltaX);
+                    if (e.deltaX && e.deltaX !== 0) {
+                        setFrameWheelX.call(self, e.deltaX);
                         setBarXPos.call(self);
                     }
                 }
