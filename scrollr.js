@@ -4,7 +4,7 @@
     
     https://github.com/cuth/scrollr
     
-    Version: 2.0.1
+    Version: 2.0.2
     
     Requires:
         jQuery
@@ -171,9 +171,13 @@
         },
         bindEvents = function () {
             var self = this;
-            $window.on('resize', debounce(function () {
-                resize.call(self);
-            }, this.opts.debounceTime));
+            $window
+                .on('resize', debounce(function () {
+                    resize.call(self);
+                }, this.opts.debounceTime))
+                .on('load', function () {
+                    resize.call(self);
+                });
             this.dragY = new Dragger(this.$barY, {
                 'drag': function (pos) {
                     setFrameScrollY.call(self, pos.y);
@@ -184,44 +188,17 @@
                     setFrameScrollX.call(self, pos.x);
                 }
             });
-            if (window.addWheelListener) {
-                addWheelListener(this.$frame[0], function (e) {
-                    if (!self.inUse) return;
-                    e.stopPropagation();
-                    if (e.deltaY && e.deltaY !== 0) {
-                        setFrameWheelY.call(self, e.deltaY);
-                        setBarYPos.call(self);
-                    }
-                    if (e.deltaX && e.deltaX !== 0) {
-                        setFrameWheelX.call(self, e.deltaX);
-                        setBarXPos.call(self);
-                    }
-                });
-            } else {
-                this.$frame.bind('wheel', function (e) {
-                    if (!self.inUse) return;
-                    e.stopPropagation();
-                    if (e.originalEvent.deltaY && e.originalEvent.deltaY !== 0) {
-                        setFrameWheelY.call(self, e.originalEvent.deltaY);
-                        setBarYPos.call(self);
-                    }
-                    if (e.originalEvent.deltaX && e.originalEvent.deltaX !== 0) {
-                        setFrameWheelX.call(self, e.originalEvent.deltaX);
-                        setBarXPos.call(self);
-                    }
-                });
-            }
-            this.$frame.bind('mousewheel', function (e) {
-                if (self.inUse) {
-                    e.stopPropagation();
-                    if (e.deltaY && e.deltaY !== 0) {
-                        setFrameWheelY.call(self, e.deltaY);
-                        setBarYPos.call(self);
-                    }
-                    if (e.deltaX && e.deltaX !== 0) {
-                        setFrameWheelX.call(self, e.deltaX);
-                        setBarXPos.call(self);
-                    }
+            this.$frame.on('mousewheel', function (e) {
+                if (!self.inUse) return;
+                e.stopPropagation();
+                e.preventDefault();
+                if (e.deltaY && e.deltaY !== 0) {
+                    setFrameWheelY.call(self, e.deltaY * -60);
+                    setBarYPos.call(self);
+                }
+                if (e.deltaX && e.deltaX !== 0) {
+                    setFrameWheelX.call(self, e.deltaX * -60);
+                    setBarXPos.call(self);
                 }
             });
         },

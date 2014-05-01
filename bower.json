@@ -1,0 +1,26 @@
+{
+  "name": "scrollr",
+  "main": "scrollr.js",
+  "version": "2.0.2",
+  "homepage": "https://github.com/cuth/scrollr",
+  "authors": [
+    "Jon Cuthbert <jon@cuth.net>"
+  ],
+  "description": "A simple custom scroll bar",
+  "keywords": [
+    "scrollbar"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "jquery-mousewheel": "~3.1.11",
+    "dragger": "https://raw.githubusercontent.com/cuth/dragger/master/dragger.js"
+  }
+}
